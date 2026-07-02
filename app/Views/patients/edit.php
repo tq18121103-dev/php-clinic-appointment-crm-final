@@ -1,89 +1,109 @@
-<h1>Edit Patient</h1>
+<a href="/patients" class="link-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="5" y1="12" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Quay lại danh sách
+</a>
+
+<div class="header-group" style="margin-bottom: 24px;">
+    <div>
+        <h1>Cập nhật Hồ sơ Bệnh nhân</h1>
+        <p class="muted">Chỉnh sửa thông tin hành chính hoặc triệu chứng của bệnh nhân.</p>
+    </div>
+</div>
 
 <?php if (!empty($errors['general'])): ?>
     <div class="alert error">
-        <?= e($errors['general']) ?>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 10px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+        <span><?= e($errors['general']) ?></span>
     </div>
 <?php endif; ?>
 
-<form method="post" action="/patients/update" class="card form-card">
+<form method="post" action="/patients/update" class="form-card" style="max-width: 600px;">
     <?= csrf_field() ?>
     <input type="hidden" name="id" value="<?= e((string) $patient['id']) ?>">
 
-    <div>
-        <label>Patient Code</label>
+    <div class="form-group">
+        <label>Mã Bệnh nhân</label>
         <input
             name="patient_code"
             value="<?= e($old['patient_code'] ?? $patient['patient_code']) ?>"
         >
-        <small class="error-text"><?= e($errors['patient_code'] ?? '') ?></small>
+        <?php if (!empty($errors['patient_code'])): ?>
+            <small class="error-text"><?= e($errors['patient_code']) ?></small>
+        <?php endif; ?>
     </div>
 
-    <br>
-
-    <div>
-        <label>Full Name</label>
+    <div class="form-group">
+        <label>Họ và Tên</label>
         <input
             name="full_name"
             value="<?= e($old['full_name'] ?? $patient['full_name']) ?>"
         >
-        <small class="error-text"><?= e($errors['full_name'] ?? '') ?></small>
+        <?php if (!empty($errors['full_name'])): ?>
+            <small class="error-text"><?= e($errors['full_name']) ?></small>
+        <?php endif; ?>
     </div>
 
-    <br>
-
-    <div>
+    <div class="form-group">
         <label>Email</label>
         <input
             name="email"
             value="<?= e($old['email'] ?? $patient['email']) ?>"
         >
-        <small class="error-text"><?= e($errors['email'] ?? '') ?></small>
+        <?php if (!empty($errors['email'])): ?>
+            <small class="error-text"><?= e($errors['email']) ?></small>
+        <?php endif; ?>
     </div>
 
-    <br>
-
-    <div>
-        <label>Phone</label>
+    <div class="form-group">
+        <label>Số Điện Thoại</label>
         <input
             name="phone"
             value="<?= e($old['phone'] ?? $patient['phone']) ?>"
         >
-        <small class="error-text"><?= e($errors['phone'] ?? '') ?></small>
+        <?php if (!empty($errors['phone'])): ?>
+            <small class="error-text"><?= e($errors['phone']) ?></small>
+        <?php endif; ?>
     </div>
 
-    <br>
-
-    <div>
-        <label>Symptom</label>
+    <div class="form-group">
+        <label>Triệu Chứng Lâm Sàng</label>
         <input
             name="symptom"
             value="<?= e($old['symptom'] ?? $patient['symptom']) ?>"
         >
-        <small class="error-text"><?= e($errors['symptom'] ?? '') ?></small>
+        <?php if (!empty($errors['symptom'])): ?>
+            <small class="error-text"><?= e($errors['symptom']) ?></small>
+        <?php endif; ?>
     </div>
 
-    <br>
-
-    <div>
-        <label>Status</label>
+    <div class="form-group">
+        <label>Trạng Thái</label>
         <select name="status">
             <?php $currentStatus = $old['status'] ?? $patient['status']; ?>
-
             <?php foreach (['treated', 'scheduled', 'contacted', 'new'] as $status): ?>
                 <option
                     value="<?= e($status) ?>"
                     <?= ($currentStatus === $status) ? 'selected' : '' ?>
                 >
-                    <?= e(ucfirst($status)) ?>
+                    <?php
+                    $statusVietnamese = [
+                        'treated' => 'Đã điều trị',
+                        'scheduled' => 'Đã xếp lịch',
+                        'contacted' => 'Đã liên hệ',
+                        'new' => 'Mới'
+                    ];
+                    echo e($statusVietnamese[$status] ?? ucfirst($status));
+                    ?>
                 </option>
             <?php endforeach; ?>
         </select>
-        <small class="error-text"><?= e($errors['status'] ?? '') ?></small>
+        <?php if (!empty($errors['status'])): ?>
+            <small class="error-text"><?= e($errors['status']) ?></small>
+        <?php endif; ?>
     </div>
 
-    <br>
-
-    <button type="submit">Update Patient</button>
-    <a href="/patients" style="margin-left: 10px;">Cancel</a>
+    <div style="margin-top: 32px; display: flex; gap: 12px;">
+        <button type="submit">Cập nhật Hồ sơ</button>
+        <a href="/patients" class="btn btn-secondary" style="line-height: 1.2;">Hủy bỏ</a>
+    </div>
 </form>

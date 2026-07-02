@@ -5,6 +5,11 @@ function e(?string $value): string
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
+function old(string $key, $default = ''): string
+{
+    return (string) ($_SESSION['old'][$key] ?? $default);
+}
+
 function redirect(string $path): void
 {
     header('Location: ' . $path);

@@ -15,7 +15,7 @@ class HealthController
         echo json_encode([
             'status' => 'ok',
             'database' => 'connected',
-            'app' => 'Secure Mini CRM',
+            'app' => 'Clinic Appointment CRM',
         ]);
     }
 }

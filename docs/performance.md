@@ -1,12 +1,12 @@
 # Performance Analysis
 
-## Lead List
+## Patient List
 
 ### Query
 
 ```sql
 SELECT *
-FROM leads
+FROM patients
 ORDER BY id DESC;
 ```
 
@@ -22,32 +22,32 @@ The query uses the PRIMARY KEY index to retrieve data in descending order effici
 
 ---
 
-## Order List
+## Appointment List
 
 ### Query
 
 ```sql
-SELECT orders.*, leads.full_name AS lead_name
-FROM orders
-LEFT JOIN leads
-ON orders.lead_id = leads.id
-WHERE orders.order_code LIKE '%OD%'
-ORDER BY orders.id DESC;
+SELECT appointments.*, patients.full_name AS patient_name
+FROM appointments
+LEFT JOIN patients
+ON appointments.patient_id = patients.id
+WHERE appointments.appointment_code LIKE '%AP%'
+ORDER BY appointments.id DESC;
 ```
 
 ### EXPLAIN
 
-Orders table
+Appointments table
 
 - type: index
 - key: PRIMARY
 - Extra: Using where; Backward index scan
 
-Leads table
+Patients table
 
 - type: eq_ref
 - key: PRIMARY
 
 ### Result
 
-The query joins the `orders` and `leads` tables using the PRIMARY KEY. MySQL performs an efficient `eq_ref` join and uses the primary index for sorting.
+The query joins the `appointments` and `patients` tables using the PRIMARY KEY. MySQL performs an efficient `eq_ref` join and uses the primary index for sorting.
