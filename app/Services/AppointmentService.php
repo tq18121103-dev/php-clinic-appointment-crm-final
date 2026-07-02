@@ -3,15 +3,15 @@
 namespace App\Services;
 
 use App\Core\DuplicateRecordException;
-use App\Repositories\OrderRepository;
+use App\Repositories\AppointmentRepository;
 
-class OrderService
+class AppointmentService
 {
-    private OrderRepository $repository;
+    private AppointmentRepository $repository;
 
     public function __construct()
     {
-        $this->repository = new OrderRepository();
+        $this->repository = new AppointmentRepository();
     }
 
     public function list(string $keyword, int $page, int $limit): array
@@ -19,18 +19,18 @@ class OrderService
         $page = max(1, $page);
         $offset = ($page - 1) * $limit;
 
-        $orders = $this->repository->paginate($keyword, $limit, $offset);
+        $appointments = $this->repository->paginate($keyword, $limit, $offset);
         $total = $this->repository->count($keyword);
         $totalPages = max(1, (int) ceil($total / $limit));
 
         if ($page > $totalPages) {
             $page = $totalPages;
             $offset = ($page - 1) * $limit;
-            $orders = $this->repository->paginate($keyword, $limit, $offset);
+            $appointments = $this->repository->paginate($keyword, $limit, $offset);
         }
 
         return [
-            'orders' => $orders,
+            'appointments' => $appointments,
             'page' => $page,
             'totalPages' => $totalPages,
         ];
@@ -90,24 +90,45 @@ class OrderService
     {
         $errors = [];
 
-        if ($data['order_code'] === '') {
-            $errors['order_code'] = 'Order code is required.';
+        if ($data['appointment_code'] === '') {
+            $errors['appointment_code'] = 'Appointment code is required.';
         }
 
-        if ($data['lead_id'] === '' || !ctype_digit((string) $data['lead_id'])) {
-            $errors['lead_id'] = 'Lead ID is required.';
+        if ($data['patient_id'] === '') {
+            $errors['patient_id'] = 'Patient is required.';
         }
 
-        if ($data['amount'] === '' || !is_numeric($data['amount']) || (float) $data['amount'] <= 0) {
-            $errors['amount'] = 'Amount must be greater than 0.';
+        if ($data['appointment_date'] === '') {
+            $errors['appointment_date'] = 'Appointment date is required.';
         }
 
-        $allowedStatuses = ['pending', 'paid', 'cancelled'];
+        if ($data['department'] === '') {
+            $errors['department'] = 'Department is required.';
+        }
 
-        if ($data['order_status'] === '') {
-            $errors['order_status'] = 'Order status is required.';
-        } elseif (!in_array($data['order_status'], $allowedStatuses, true)) {
-            $errors['order_status'] = 'Invalid order status.';
+        if (
+            $data['fee'] === ''
+            || !is_numeric($data['fee'])
+            || (float)$data['fee'] < 0
+        ) {
+            $errors['fee'] = 'Fee must be a positive number.';
+        }
+
+        $allowedStatuses = [
+            'pending',
+            'confirmed',
+            'completed',
+            'cancelled',
+        ];
+
+        if (
+            !in_array(
+                $data['appointment_status'],
+                $allowedStatuses,
+                true
+            )
+        ) {
+            $errors['appointment_status'] = 'Invalid appointment status.';
         }
 
         return $errors;

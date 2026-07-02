@@ -2,7 +2,7 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use App\Controllers\OrderController;
+use App\Controllers\AppointmentController;
 use App\Controllers\PatientController;
 use App\Core\Router;
 use App\Controllers\HomeController;
@@ -32,12 +32,12 @@ $router->post('/login', [AuthController::class, 'handleLogin']);
 $router->post('/logout', [AuthController::class, 'logout']);
 $router->get('/dashboard', [DashboardController::class, 'index']);
 $router->get('/health', [HealthController::class, 'index']);
-$router->get('/orders', [OrderController::class, 'index']);
-$router->get('/orders/create', [OrderController::class, 'create']);
-$router->post('/orders', [OrderController::class, 'store']);
-$router->get('/orders/edit', [OrderController::class, 'edit']);
-$router->post('/orders/update', [OrderController::class, 'update']);
-$router->post('/orders/delete', [OrderController::class, 'delete']);
+$router->get('/appointments', [AppointmentController::class, 'index']);
+$router->get('/appointments/create', [AppointmentController::class, 'create']);
+$router->post('/appointments', [AppointmentController::class, 'store']);
+$router->get('/appointments/edit', [AppointmentController::class, 'edit']);
+$router->post('/appointments/update', [AppointmentController::class, 'update']);
+$router->post('/appointments/delete', [AppointmentController::class, 'delete']);
 $router->get('/patients', [PatientController::class, 'index']);
 $router->get('/patients/create', [PatientController::class, 'create']);
 $router->post('/patients', [PatientController::class, 'store']);

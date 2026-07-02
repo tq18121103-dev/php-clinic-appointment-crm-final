@@ -24,10 +24,12 @@ class PatientRepository
 
         if ($keyword !== '') {
             $sql .= "
-            WHERE patient_code LIKE :keyword
-            OR full_name LIKE :keyword
-            OR phone LIKE :keyword
-            OR gender LIKE :keyword
+            WHERE patient_code LIKE :keyword1
+            OR full_name LIKE :keyword2
+            OR phone LIKE :keyword3
+            OR email LIKE :keyword4
+            OR symptom LIKE :keyword5
+            OR status LIKE :keyword6
             ";
         }
 
@@ -36,7 +38,9 @@ class PatientRepository
             'patient_code' => 'patient_code',
             'full_name' => 'full_name',
             'phone' => 'phone',
-            'gender' => 'gender',
+            'email' => 'email',
+            'symptom' => 'symptom',
+            'status' => 'status',
             'created_at' => 'created_at',
         ];
 
@@ -84,10 +88,12 @@ class PatientRepository
 
         if ($keyword !== '') {
             $sql .= "
-            WHERE patient_code LIKE :keyword
-            OR full_name LIKE :keyword
-            OR phone LIKE :keyword
-            OR gender LIKE :keyword
+            WHERE patient_code LIKE :keyword1
+            OR full_name LIKE :keyword2
+            OR phone LIKE :keyword3
+            OR email LIKE :keyword4
+            OR symptom LIKE :keyword5
+            OR status LIKE :keyword6
             ";
         }
 
@@ -130,17 +136,19 @@ class PatientRepository
                 (
                     patient_code,
                     full_name,
+                    email,
                     phone,
-                    gender,
-                    birth_date
+                    symptom,
+                    status
                 )
                 VALUES
                 (
                     :patient_code,
                     :full_name,
+                    :email,
                     :phone,
-                    :gender,
-                    :birth_date
+                    :symptom,
+                    :status
                 )
             ");
 
@@ -148,9 +156,10 @@ class PatientRepository
                 [
                     'patient_code' => $data['patient_code'],
                     'full_name'    => $data['full_name'],
+                    'email'        => $data['email'],
                     'phone'        => $data['phone'],
-                    'gender'       => $data['gender'],
-                    'birth_date'   => $data['birth_date'],
+                    'symptom'      => $data['symptom'],
+                    'status'       => $data['status'],
                 ]
             );
         } catch (PDOException $e) {
@@ -174,9 +183,10 @@ class PatientRepository
             SET
                 patient_code = :patient_code,
                 full_name = :full_name,
+                email = :email,
                 phone = :phone,
-                gender = :gender,
-                birth_date = :birth_date
+                symptom = :symptom,
+                status = :status
             WHERE id = :id
             ");
 
@@ -185,9 +195,10 @@ class PatientRepository
                     'id'           => $id,
                     'patient_code' => $data['patient_code'],
                     'full_name'    => $data['full_name'],
+                    'email'        => $data['email'],
                     'phone'        => $data['phone'],
-                    'gender'       => $data['gender'],
-                    'birth_date'   => $data['birth_date'],
+                    'symptom'      => $data['symptom'],
+                    'status'       => $data['status'],
                 ]
             );
         } catch (PDOException $e) {

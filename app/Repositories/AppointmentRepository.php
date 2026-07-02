@@ -7,7 +7,7 @@ use App\Core\DuplicateRecordException;
 use PDO;
 use PDOException;
 
-class OrderRepository
+class AppointmentRepository
 {
     private PDO $pdo;
 
@@ -19,31 +19,31 @@ class OrderRepository
     public function paginate(string $keyword, int $limit, int $offset): array
     {
         $sql = "
-            SELECT orders.*, leads.full_name AS lead_name
-            FROM orders
-            LEFT JOIN leads ON orders.lead_id = leads.id
+            SELECT appointments.*, patients.full_name AS patient_name
+            FROM appointments
+            LEFT JOIN patients ON appointments.patient_id = patients.id
         ";
 
         if ($keyword !== '') {
             $sql .= "
-                WHERE orders.order_code LIKE :keyword1
-                   OR leads.full_name LIKE :keyword2
-                   OR orders.order_status LIKE :keyword3
+                WHERE appointments.appointment_code LIKE :keyword1
+                   OR patients.full_name LIKE :keyword2
+                   OR appointments.appointment_status LIKE :keyword3
             ";
         }
 
         $allowedSorts = [
-            'id' => 'orders.id',
-            'order_code' => 'orders.order_code',
-            'amount' => 'orders.amount',
-            'order_status' => 'orders.order_status',
-            'created_at' => 'orders.created_at',
+            'id' => 'appointments.id',
+            'appointment_code' => 'appointments.appointment_code',
+            'fee' => 'appointments.fee',
+            'appointment_status' => 'appointments.appointment_status',
+            'created_at' => 'appointments.created_at',
         ];
 
         $sort = $_GET['sort'] ?? 'id';
         $direction = strtoupper($_GET['direction'] ?? 'DESC');
 
-        $sortColumn = $allowedSorts[$sort] ?? 'orders.id';
+        $sortColumn = $allowedSorts[$sort] ?? 'appointments.id';
 
         if (!in_array($direction, ['ASC', 'DESC'], true)) {
             $direction = 'DESC';
@@ -76,15 +76,15 @@ class OrderRepository
     {
         $sql = "
             SELECT COUNT(*)
-            FROM orders
-            LEFT JOIN leads ON orders.lead_id = leads.id
+            FROM appointments
+            LEFT JOIN patients ON appointments.patient_id = patients.id
         ";
 
         if ($keyword !== '') {
             $sql .= "
-                WHERE orders.order_code LIKE :keyword1
-                   OR leads.full_name LIKE :keyword2
-                   OR orders.order_status LIKE :keyword3
+                WHERE appointments.appointment_code LIKE :keyword1
+                   OR patients.full_name LIKE :keyword2
+                   OR appointments.appointment_status LIKE :keyword3
             ";
         }
 
@@ -107,7 +107,7 @@ class OrderRepository
     {
         $stmt = $this->pdo->prepare("
             SELECT *
-            FROM orders
+            FROM appointments
             WHERE id = ?
         ");
 
@@ -120,27 +120,33 @@ class OrderRepository
     {
         try {
             $stmt = $this->pdo->prepare("
-                INSERT INTO orders
+                INSERT INTO appointments
                 (
-                    order_code,
-                    lead_id,
-                    amount,
-                    order_status
+                    appointment_code,
+                    patient_id,
+                    appointment_date,
+                    department,
+                    fee,
+                    appointment_status
                 )
                 VALUES
                 (
-                    :order_code,
-                    :lead_id,
-                    :amount,
-                    :order_status
+                    :appointment_code,
+                    :patient_id,
+                    :appointment_date,
+                    :department,
+                    :fee,
+                    :appointment_status
                 )
             ");
 
             $stmt->execute([
-                'order_code' => $data['order_code'],
-                'lead_id' => $data['lead_id'],
-                'amount' => $data['amount'],
-                'order_status' => $data['order_status'],
+                'appointment_code' => $data['appointment_code'],
+                'patient_id' => $data['patient_id'],
+                'appointment_date' => $data['appointment_date'],
+                'department' => $data['department'],
+                'fee' => $data['fee'],
+                'appointment_status' => $data['appointment_status'],
             ]);
 
         } catch (PDOException $e) {
@@ -148,13 +154,13 @@ class OrderRepository
         
             if ($mysqlCode === 1062) {
                 throw new DuplicateRecordException(
-                    'Order code already exists.'
+                    'Appointment code already exists.'
                 );
             }
         
             if ($mysqlCode === 1452) {
                 throw new DuplicateRecordException(
-                    'Selected lead does not exist.'
+                    'Selected patient does not exist.'
                 );
             }
         
@@ -166,34 +172,38 @@ class OrderRepository
     {
         try {
             $stmt = $this->pdo->prepare("
-                UPDATE orders
+                UPDATE appointments
                 SET
-                    order_code = :order_code,
-                    lead_id = :lead_id,
-                    amount = :amount,
-                    order_status = :order_status
+                    appointment_code = :appointment_code,
+                    patient_id = :patient_id,
+                    appointment_date = :appointment_date,
+                    department = :department,
+                    fee = :fee,
+                    appointment_status = :appointment_status
                 WHERE id = :id
             ");
 
             $stmt->execute([
                 'id' => $id,
-                'order_code' => $data['order_code'],
-                'lead_id' => $data['lead_id'],
-                'amount' => $data['amount'],
-                'order_status' => $data['order_status'],
+                'appointment_code' => $data['appointment_code'],
+                'patient_id' => $data['patient_id'],
+                'appointment_date' => $data['appointment_date'],
+                'department' => $data['department'],
+                'fee' => $data['fee'],
+                'appointment_status' => $data['appointment_status'],
             ]);
         } catch (PDOException $e) {
             $mysqlCode = $e->errorInfo[1] ?? null;
         
             if ($mysqlCode === 1062) {
                 throw new DuplicateRecordException(
-                    'Order code already exists.'
+                    'Appointment code already exists.'
                 );
             }
         
             if ($mysqlCode === 1452) {
                 throw new DuplicateRecordException(
-                    'Selected lead does not exist.'
+                    'Selected patient does not exist.'
                 );
             }
         
@@ -204,7 +214,7 @@ class OrderRepository
     public function delete(int $id): void
     {
         $stmt = $this->pdo->prepare("
-            DELETE FROM orders
+            DELETE FROM appointments
             WHERE id = ?
         ");
 

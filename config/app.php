@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'name' => 'Secure Mini CRM',
+    'name' => 'Clinic Appointment CRM',
     'debug' => true,
 ];

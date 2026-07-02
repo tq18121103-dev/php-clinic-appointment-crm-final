@@ -86,7 +86,7 @@ class PatientController
 
         render('patients/edit', [
             'title' => 'Edit Patients',
-            'patients' => $patient,
+            'patient' => $patient,
             'errors' => $_SESSION['errors'] ?? [],
             'old' => $_SESSION['old'] ?? [],
         ]);
@@ -139,9 +139,10 @@ class PatientController
         return [
             'patient_code' => trim($_POST['patient_code'] ?? ''),
             'full_name' => trim($_POST['full_name'] ?? ''),
+            'email' => trim($_POST['email'] ?? ''),
             'phone' => trim($_POST['phone'] ?? ''),
-            'gender' => trim($_POST['gender'] ?? ''),
-            'birth_date' => trim($_POST['birth_date'] ?? ''),
+            'symptom' => trim($_POST['symptom'] ?? ''),
+            'status' => trim($_POST['status'] ?? ''),
         ];
     }
 }

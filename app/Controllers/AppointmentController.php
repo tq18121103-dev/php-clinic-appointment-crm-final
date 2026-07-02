@@ -1,16 +1,15 @@
 <?php
 
 namespace App\Controllers;
+use App\Services\AppointmentService;
 
-use App\Services\OrderService;
-
-class OrderController
+class AppointmentController
 {
-    private OrderService $service;
+    private AppointmentService $service;
 
     public function __construct()
     {
-        $this->service = new OrderService();
+        $this->service = new AppointmentService();
     }
 
     public function index(): void
@@ -23,9 +22,9 @@ class OrderController
 
         $result = $this->service->list($keyword, $page, $limit);
 
-        render('orders/index', [
-            'title' => 'Orders',
-            'orders' => $result['orders'],
+        render('appointments/index', [
+            'title' => 'Appointments',
+            'appointments' => $result['appointments'],
             'keyword' => $keyword,
             'page' => $result['page'],
             'totalPages' => $result['totalPages'],
@@ -37,8 +36,8 @@ class OrderController
         require_login();
         require_admin();
 
-        render('orders/create', [
-            'title' => 'Create Order',
+        render('appointments/create', [
+            'title' => 'Create Appointment',
             'errors' => $_SESSION['errors'] ?? [],
             'old' => $_SESSION['old'] ?? [],
         ]);
@@ -61,12 +60,12 @@ class OrderController
             $_SESSION['errors'] = $result['errors'];
             $_SESSION['old'] = $data;
 
-            redirect('/orders/create');
+            redirect('/appointments/create');
         }
 
-        flash('success', 'Order created successfully.');
+        flash('success', 'Appointment created successfully.');
 
-        redirect('/orders');
+        redirect('/appointments');
     }
 
     public function edit(): void
@@ -76,17 +75,17 @@ class OrderController
 
         $id = (int) ($_GET['id'] ?? 0);
 
-        $order = $this->service->find($id);
+        $appointment = $this->service->find($id);
 
-        if (!$order) {
+        if (!$appointment) {
             http_response_code(404);
             render('errors/404', ['title' => '404 Not Found']);
             return;
         }
 
-        render('orders/edit', [
-            'title' => 'Edit Order',
-            'order' => $order,
+        render('appointments/edit', [
+            'title' => 'Edit Appointment',
+            'appointment' => $appointment,
             'errors' => $_SESSION['errors'] ?? [],
             'old' => $_SESSION['old'] ?? [],
         ]);
@@ -110,12 +109,12 @@ class OrderController
             $_SESSION['errors'] = $result['errors'];
             $_SESSION['old'] = $data;
 
-            redirect('/orders/edit?id=' . $id);
+            redirect('/appointments/edit?id=' . $id);
         }
 
-        flash('success', 'Order updated successfully.');
+        flash('success', 'Appointment updated successfully.');
 
-        redirect('/orders');
+        redirect('/appointments');
     }
 
     public function delete(): void
@@ -129,18 +128,20 @@ class OrderController
 
         $this->service->delete($id);
 
-        flash('success', 'Order deleted successfully.');
+        flash('success', 'Appointment deleted successfully.');
 
-        redirect('/orders');
+        redirect('/appointments');
     }
 
-    private function input(): array
+   private function input(): array
     {
         return [
-            'order_code' => trim($_POST['order_code'] ?? ''),
-            'lead_id' => trim($_POST['lead_id'] ?? ''),
-            'amount' => trim($_POST['amount'] ?? ''),
-            'order_status' => trim($_POST['order_status'] ?? ''),
+            'appointment_code' => trim($_POST['appointment_code'] ?? ''),
+            'patient_id' => trim($_POST['patient_id'] ?? ''),
+            'appointment_date' => trim($_POST['appointment_date'] ?? ''),
+            'department' => trim($_POST['department'] ?? ''),
+            'fee' => trim($_POST['fee'] ?? ''),
+            'appointment_status' => trim($_POST['appointment_status'] ?? ''),
         ];
     }
 }
